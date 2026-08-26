@@ -61,13 +61,14 @@ if st.button("Calcular Preço Sugerido"):
 st.divider()
 
 # Chamada de Ação (CTA) para Venda das Planilhas/Modelos Completos
+# Chamada de Ação (CTA) para Venda das Planilhas/Modelos Completos
 st.subheader("📦 Leve a Gestão Completa para o seu Negócio")
 st.write("Quer automatizar todo o seu controle de caixa, emissão de propostas e precificação em planilhas prontas?")
 
 st.markdown("""
-<a href="https://kiwify.com.br" target="_blank">
-    <button style="background-color:#0284c7; color:white; border:none; padding:12px 24px; border-radius:6px; font-size:16px; cursor:pointer;">
-        🛒 Adquirir Modelo Completo de Planilhas
+<a href="https://wa.me/5584999247550?text=Ol%C3%A1!%20Quer%20automatizar%20todo%20o%20seu%20controle%20de%20caixa,%20emiss%C3%A3o%20de%20propostas%20e%20precifica%C3%A7%C3%A3o%20em%20planilhas%20prontas?" target="_blank">
+    <button style="background-color:#25D366; color:white; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer;">
+        📲 Solicitar Modelo Completo no WhatsApp
     </button>
 </a>
 """, unsafe_allow_html=True)
