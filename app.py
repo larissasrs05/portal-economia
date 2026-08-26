@@ -1,74 +1,174 @@
 import streamlit as st
+import pandas as pd
+import urllib.parse
 
 # Configuração da página
-st.set_page_config(page_title="Portal de Economia & Gestão", layout="wide")
+st.set_page_config(
+    page_title="CAE | Consultoria & Assessoria Econômica",
+    page_icon="📈",
+    layout="wide"
+)
 
-# Título Principal do Site
-st.title("💡 Portal de Economia & Gestão para Empreendedores")
-st.caption("Aprenda conceitos práticos de negócios e aplique ferramentas de gestão no seu dia a dia.")
-
-# Organização do Portal em Abas Educativas
-aba1, aba2, aba3 = st.tabs(["📊 Economia Aplicada", "📑 Contabilidade Prática", "⏱️ Rotina do Negócio"])
-
-with aba1:
-    st.header("Economia para Micro e Pequenos Negócios")
-    st.write("""
-    * **Margem de Contribuição:** O valor que sobra da venda de um produto após descontar os custos e despesas variáveis. É o que vai pagar os custos fixos da sua empresa.
-    * **Ponto de Equilíbrio (Break-Even):** O volume exato de vendas necessário para que sua empresa não tenha nem lucro nem prejuízo.
-    * **Impacto da Inflação no Estoque:** Como ajustar sua tabela de preços à medida que a matéria-prima e os insumos sobem.
-    """)
-
-with aba2:
-    st.header("Finanças e Contabilidade Simplificada")
-    st.write("""
-    * **Fluxo de Caixa vs. Lucro:** Entenda por que uma empresa pode ser lucrativa no papel, mas ficar sem dinheiro no caixa para pagar contas no dia a dia.
-    * **DRE Simplificado:** Como organizar Receitas, Custos Variáveis, Margem Bruta, Despesas Fixas e Resultado Líquido em uma estrutura lógica.
-    * **Separação de Caixas:** A importância de definir um pró-labore e nunca misturar as finanças pessoais com as da empresa.
-    """)
-
-with aba3:
-    st.header("Rotina e Protocolos de Gestão Operacional")
-    st.write("""
-    * **Fechamento Diário:** Protocolo de verificação do caixa físico e conciliação das taxas de maquininhas de cartão.
-    * **Controle de Estoque Giro/Curva ABC:** Identificação dos produtos de alta rotação que não podem faltar nas vendas.
-    * **Revisão Semanal de Metas:** Como analisar indicadores de desempenho (KPIs) rápidos para tomar decisões informadas.
-    """)
-
-st.divider()
-
-# Ferramenta Interativa de Demonstração (Calculadora de Precificação)
-st.subheader("🛠️ Ferramenta Prática: Calculadora de Precificação")
-st.write("Insira os dados do seu produto abaixo para calcular a margem real de lucro.")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    custo_direto = st.number_input("Custo da Matéria-Prima / Aquisição (R$):", min_value=0.0, value=25.0)
-    taxa_cartao = st.number_input("Taxas de Cartão / Venda (%):", min_value=0.0, value=5.0)
-
-with col2:
-    margem_desejada = st.slider("Margem de Lucro Desejada (%):", min_value=5, max_value=150, value=40)
-
-if st.button("Calcular Preço Sugerido"):
-    # Lógica simples de precificação sobre o custo
-    preco_base = custo_direto * (1 + (margem_desejada / 100))
-    preco_final = preco_base / (1 - (taxa_cartao / 100))
-    lucro_liquido = preco_final - custo_direto - (preco_final * (taxa_cartao / 100))
-    
-    st.success(f"**Preço de Venda Recomendado:** R$ {preco_final:.2f}")
-    st.info(f"**Lucro Líquido Estimado:** R$ {lucro_liquido:.2f} por unidade")
-
-st.divider()
-
-# Chamada de Ação (CTA) para Venda das Planilhas/Modelos Completos
-# Chamada de Ação (CTA) para Venda das Planilhas/Modelos Completos
-st.subheader("📦 Leve a Gestão Completa para o seu Negócio")
-st.write("Quer automatizar todo o seu controle de caixa, emissão de propostas e precificação em planilhas prontas?")
-
+# Estilização Personalizada (Visual Executivo e Formal)
 st.markdown("""
-<a href="https://wa.me/5584999247550?text=Ol%C3%A1!%20Quer%20automatizar%20todo%20o%20seu%20controle%20de%20caixa,%20emiss%C3%A3o%20de%20propostas%20e%20precifica%C3%A7%C3%A3o%20em%20planilhas%20prontas?" target="_blank">
-    <button style="background-color:#25D366; color:white; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer;">
-        📲 Solicitar Modelo Completo no WhatsApp
-    </button>
+    <style>
+    .main-header {
+        font-size: 2.3rem;
+        font-weight: 700;
+        color: #0A192F;
+        margin-bottom: 0px;
+    }
+    .sub-header {
+        font-size: 1.1rem;
+        color: #4A5568;
+        margin-bottom: 25px;
+    }
+    .card-box {
+        background-color: #F8FAFC;
+        border-left: 5px solid #0A192F;
+        padding: 18px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+    .cta-button {
+        background-color: #0A192F;
+        color: #FFFFFF !important;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 15px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Link do WhatsApp
+numero_whatsapp = "5584999247550"
+mensagem_padrao = "Olá! Gostaria de solicitar informações sobre o pacote de planilhas automáticas e serviços de consultoria econômica."
+link_whatsapp = f"https://wa.me/{numero_whatsapp}?text={urllib.parse.quote(mensagem_padrao)}"
+
+# Cabeçalho Principal
+st.markdown('<p class="main-header">CAE — Consultoria e Assessoria Econômica</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Soluções em Inteligência Financeira, Gestão Estratégica e Análise Mercadológica</p>', unsafe_allow_html=True)
+st.divider()
+
+# Navegação por Abas Executivas
+aba1, aba2, aba3, aba4 = st.tabs([
+    "🏛️ Consultoria & Projetos", 
+    "📊 Gestão Financeira & DRE", 
+    "🧮 Simulador de Precificação", 
+    "📦 Modelos & Planilhas"
+])
+
+# ABA 1: CONSULTORIA E PROJETOS
+with aba1:
+    st.subheader("Soluções Estratégicas para Empresas e Projetos Públicos")
+    st.write("A inteligência econômica permite identificar oportunidades de crescimento, mitigar riscos operacionais e otimizar a alocação de recursos.")
+    
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("""
+        <div class="card-box">
+            <h4>Análise de Viabilidade Econômico-Financeira</h4>
+            <p>Estudo detalhado de VPL (Valor Presente Líquido), TIR (Taxa Interna de Retorno) e Payback para validação de novos investimentos e projetos expansivos.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="card-box">
+            <h4>Precificação Estratégica & Margem de Lucro</h4>
+            <p>Desenvolvimento de modelos rigorosos de formação de preço considerando custos fixos, variáveis, impostos e elasticidade da demanda.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col_b:
+        st.markdown("""
+        <div class="card-box">
+            <h4>Diagnóstico Organizacional e Orçamentário</h4>
+            <p>Mapeamento de gargalos financeiros, análise de fluxo de caixa e reestruturação de custos para aumentar a margem operacional.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="card-box">
+            <h4>Projetos e Assessoramento Municipal</h4>
+            <p>Suporte em análise de indicadores socioeconômicos, elaboração de pareceres técnicos e planejamento financeiro governamental.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ABA 2: GESTÃO FINANCEIRA
+with aba2:
+    st.subheader("Pilares da Gestão Contábil e Financeira")
+    st.write("A aplicação contínua de métodos contábeis garante a sustentabilidade e a liquidez de qualquer empreendimento.")
+    
+    st.markdown("""
+    * **Demonstração do Resultado do Exercício (DRE):** Acompanhamento sistemático de Receita Bruta, Deduções, Lucro Bruto, Despesas Operacionais e Lucro Líquido Real.
+    * **Conciliação e Gestão do Fluxo de Caixa:** Separação rigorosa entre o regime de caixa e regime de competência para evitar iliquidez técnica.
+    * **Indicadores de Desempenho (KPIs):** Monitoramento contínuo da Margem de Contribuição, Ponto de Equilíbrio (Break-Even Point) e Giro de Estoque.
+    * **Governança e Separação de Caixas:** Diretrizes para definição do Pró-labore e blindagem do patrimônio pessoal em relação às finanças corporativas.
+    """)
+
+# ABA 3: TABELA DE PRECIFICAÇÃO E SIMULAÇÃO
+with aba3:
+    st.subheader("📊 Simulação Completa de Precificação e Margem de Lucro")
+    st.write("Edite os dados dos seus produtos na tabela abaixo para simular o preço final recomendado e a projeção de lucro líquido total.")
+
+    # Tabela com dados iniciais de exemplo que o usuário pode editar na tela
+    dados_iniciais = pd.DataFrame([
+        {"Produto": "Vestido Floral", "Custo (R$)": 45.0, "Taxas/Impostos (%)": 10.0, "Margem Alvo (%)": 40.0, "Vendas Estimadas (Qtd)": 20},
+        {"Produto": "Conjunto Alfaiataria", "Custo (R$)": 80.0, "Taxas/Impostos (%)": 12.0, "Margem Alvo (%)": 45.0, "Vendas Estimadas (Qtd)": 15},
+        {"Produto": "Blusa Basic", "Custo (R$)": 25.0, "Taxas/Impostos (%)": 8.0, "Margem Alvo (%)": 35.0, "Vendas Estimadas (Qtd)": 50}
+    ])
+
+    # Exibe a tabela editável
+    tabela_editada = st.data_editor(dados_iniciais, num_rows="dynamic", use_container_width=True)
+
+    # Processamento dos cálculos
+    if not tabela_editada.empty:
+        # Fórmulas de Precificação por Markup sobre a venda
+        tabela_editada["Preço Sugerido (R$)"] = tabela_editada["Custo (R$)"] / (1 - ((tabela_editada["Taxas/Impostos (%)"] + tabela_editada["Margem Alvo (%)"]) / 100))
+        tabela_editada["Lucro Unitário (R$)"] = tabela_editada["Preço Sugerido (R$)"] - tabela_editada["Custo (R$)"] - (tabela_editada["Preço Sugerido (R$)"] * (tabela_editada["Taxas/Impostos (%)"] / 100))
+        tabela_editada["Lucro Total Estimado (R$)"] = tabela_editada["Lucro Unitário (R$)"] * tabela_editada["Vendas Estimadas (Qtd)"]
+
+        # Arredondamento para visualização limpa
+        tabela_editada["Preço Sugerido (R$)"] = tabela_editada["Preço Sugerido (R$)"].round(2)
+        tabela_editada["Lucro Unitário (R$)"] = tabela_editada["Lucro Unitário (R$)"].round(2)
+        tabela_editada["Lucro Total Estimado (R$)"] = tabela_editada["Lucro Total Estimado (R$)"].round(2)
+
+        st.markdown("### 📈 Resultado do Diagnóstico de Precificação")
+        
+        # Resumo Financeiro em Destaque
+        faturamento_total = (tabela_editada["Preço Sugerido (R$)"] * tabela_editada["Vendas Estimadas (Qtd)"]).sum()
+        lucro_geral = tabela_editada["Lucro Total Estimado (R$)"].sum()
+
+        m1, m2 = st.columns(2)
+        m1.metric("Projeção de Faturamento Total", f"R$ {faturamento_total:,.2f}")
+        m2.metric("Projeção de Lucro Líquido Total", f"R$ {lucro_geral:,.2f}")
+
+        # Tabela Final Formatada
+        st.dataframe(tabela_editada, use_container_width=True)
+
+# ABA 4: MODELOS E PLANILHAS
+with aba4:
+    st.subheader("Ecossistema Completo de Gestão Financeira")
+    st.write("Adquira soluções prontas desenvolvidas para automatizar a operação do seu negócio:")
+    
+    st.markdown("""
+    * **Planilha de Controle Financeiro Integrado:** Fluxo de Caixa, DRE Automático e Dashboard Executivo.
+    * **Gerador de Propostas Comerciais:** Automação de orçamentos e cálculo imediato de margem.
+    * **Calculadora de Precificação Multiprofissional:** Matriz completa para comércio, serviços e produtos personalizados.
+    """)
+
+st.divider()
+
+# Seção CTA Final (Atendimento via WhatsApp)
+st.markdown("### 🏛️ Solicite Atendimento ou Adquira os Modelos Automáticos")
+st.write("Entre em contato direto para soluções personalizadas de consultoria, assessoria ou envio imediato das ferramentas de gestão.")
+
+st.markdown(f"""
+<a href="{link_whatsapp}" target="_blank" class="cta-button">
+    📲 Falar com Consultor no WhatsApp
 </a>
 """, unsafe_allow_html=True)
